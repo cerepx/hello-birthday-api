@@ -1,3 +1,8 @@
+"""
+Defines the API routes for the Hello Birthday API.
+Includes endpoints for saving users and returning birthday messages.
+"""
+
 import re
 from datetime import date, datetime
 from flask import abort, jsonify, request
@@ -8,7 +13,9 @@ from app.models import init_db, save_user_to_db, get_user_from_db
 init_db()
 
 def register_routes(app):
-
+    """
+    Register all API routes (endpoints) directly to the app.
+    """
     def validate_username(username: str) -> None:
         """
         Validates that the username contains only alphabetic characters.
@@ -81,7 +88,7 @@ def register_routes(app):
         if not row:
             abort(404, description="User not found in the database")
 
-        dob = datetime.strptime(row[0], "%Y-%m-%d").date()
+        dob = row[0]
         today = date.today()
 
         # Replace year to calculate next birthday occurrence
@@ -89,7 +96,7 @@ def register_routes(app):
 
         # If birthday has already passed this year, calculate for next year
         if birthday_this_year < today:
-            next_birthday = dob.replace(year=today.year + 1)
+            next_birthday = birthday_this_year.replace(year=today.year + 1)
         else:
             next_birthday = birthday_this_year
 

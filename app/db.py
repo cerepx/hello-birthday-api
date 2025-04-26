@@ -1,20 +1,37 @@
+"""
+Database connection utilities for the Hello Birthday API.
+Handles MySQL connection retries on startup.
+"""
+
 import os
-import sqlite3
-from contextlib import contextmanager
+import time
+import pymysql
 
-DATABASE_PATH = "birthday.db"
 
-@contextmanager
-def get_connection():
+def get_connection(retries=10, delay=2):
     """
-    Context manager to get a SQLite3 database connection.
+    Attempt to connect to MySQL, retrying on failure.
 
-    Yields:
-        sqlite3.Connection: SQLite3 connection object.
+    Args:
+        retries (int): Number of retry attempts.
+        delay (int): Seconds to wait between attempts.
+
+    Raises:
+        Exception: If connection fails after all retries.
     """
-    conn = sqlite3.connect(DATABASE_PATH)
-    conn.row_factory = sqlite3.Row  # Enable dictionary-like row access
-    try:
-        yield conn
-    finally:
-        conn.close()
+    for attempt in range(1, retries + 1):
+        try:
+            return pymysql.connect(
+                host=os.getenv("MYSQL_HOST"),
+                user=os.getenv("MYSQL_USER"),
+                password=os.getenv("MYSQL_PASSWORD"),
+                database=os.getenv("MYSQL_DB"),
+                charset="utf8mb4",
+                cursorclass=pymysql.cursors.DictCursor
+            )
+        except pymysql.err.OperationalError as db_error:
+            print(f"[DB Retry] Attempt {attempt}/{retries}: {db_error}")
+
+            time.sleep(delay)
+
+    raise ConnectionError("Could not connect to MySQL after multiple retries.")

@@ -1,6 +1,6 @@
 # Hello Birthday API
 
-A simple API to save and retrieve user birthdays, built with Flask and SQLite.
+A simple API to save and retrieve user birthdays, built with Flask and MySQL.
 
 ---
 
@@ -10,65 +10,66 @@ A simple API to save and retrieve user birthdays, built with Flask and SQLite.
 - Get a birthday greeting via `GET /hello/<username>`
 - Health check endpoint at `/health`
 - Simple SQLite or MySQL backend
-- Ready for Docker and production (via Gunicorn)
+- Dockerized with MySQL and healthchecks
+- Pytest test suite
 
 ---
 
-## Requirements
+## Tech Stack
 
-- Python 3.10+
-- pip (Python package installer)
-- MySQL (or SQLite for quick testing)
-
----
-
-## Installation
-
-Clone the repo and install dependencies:
-
-```bash
-git clone https://github.com/cerepx/hello-birthday-api.git
-cd hello-birthday-api
-pip install -r requirements.txt
-```
+- **Python 3.10**
+- **Flask**
+- **MySQL (via Docker for testing)**
+- **Gunicorn (for production WSGI)**
+- **Docker & Docker Compose**
 
 ---
 
 ## Run Locally
 
-Follow these steps to run the project locally:
+### 1. Clone the repo
 
-1. **Create a Virtual Environment**:
+```bash
+git clone https://github.com/cerepx/hello-birthday-api.git
+cd hello-birthday-api
+```
+
+### 2. Create your .env file
+
+```bash
+cp .env.example .env
+```
+
+**Environment Variables**:
+   - MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DB
+   - BASE_URL for tests
+
+### 3. Start the app
    ```bash
-   python3 -m venv venv
-   source venv/bin/activate
+   make up
    ```
 
-2. **Install Dependencies**:
+### 4. Run the tests
    ```bash
-   pip install -r requirements-dev.txt
+   make test
    ```
-
-3. **Run the Application**:
-   ```bash
-   python app/main.py
-   ```
-
-4. **Access the API**:
-   The API will be available at `http://localhost:5050`.
 
 ---
 
-## Run Tests
+## API Usage
 
-To run the test suite:
-
-1. **Activate the Virtual Environment**:
+1. **Save a user**:
    ```bash
-   source venv/bin/activate
+   curl -X PUT http://localhost:5050/hello/Constantin -H "Content-Type: application/json" -d '{"dateOfBirth":"1985-04-16"}'
    ```
 
-2. **Run Tests with `pytest`**:
+2. **Get a birthday message**:
    ```bash
-   pytest
+   curl http://localhost:5050/hello/Constantin
    ```
+
+---
+
+## License
+
+This project is licensed under the MIT License.
