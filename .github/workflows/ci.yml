@@ -3,10 +3,10 @@ name: CI - Lint, Test, Build and Deploy
 on:
   push:
     branches:
-      - ci/add-basic-github-actions
+      - main
   pull_request:
     branches:
-      - ci/add-basic-github-actions
+      - main
 
 env:
   BASE_URL: http://localhost:5050
