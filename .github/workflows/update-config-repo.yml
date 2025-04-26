@@ -45,7 +45,7 @@ jobs:
       - name: Create Pull Request to Config Repo
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
           path: hello-birthday-api-config-repo
           commit-message: "chore: update hello-birthday-api image to ${{ github.event.client_payload.version }}"
           title: "Update hello-birthday-api image to ${{ github.event.client_payload.version }}"
