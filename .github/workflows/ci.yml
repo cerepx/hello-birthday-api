@@ -1,0 +1,120 @@
+name: CI - Lint, Test, Build and Deploy
+
+on:
+  push:
+    branches:
+      - ci/add-basic-github-actions
+  pull_request:
+    branches:
+      - ci/add-basic-github-actions
+
+env:
+  BASE_URL: http://localhost:5050
+  IMAGE_NAME: ghcr.io/${{ github.repository }}
+  VERSION: 1.0.${{github.run_number}}
+
+jobs:
+  lint-format:
+    name: Lint and Format
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Run pylint
+        run: |
+          pylint app tests
+
+      - name: Check formatting with autopep8
+        run: |
+          autopep8 --diff --exit-code --recursive app tests || echo "Formatting issues detected"
+
+  test-compose:
+    name: Integration Tests (Docker Compose)
+    runs-on: ubuntu-latest
+    needs: lint-format
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create .env file
+        run: |
+          echo "MYSQL_HOST=db" >> .env
+          echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
+          echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
+          echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> .env
+          echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
+
+      - name: Start Docker Compose
+        run: |
+          docker compose up --build -d
+          docker compose ps
+
+      - name: Wait for API readiness
+        run: |
+          echo "Waiting for API to be ready at $BASE_URL/health..."
+          for i in {1..10}; do
+            STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" $BASE_URL/health || echo "000")
+            echo "Status code: $STATUS_CODE"
+            if [ "$STATUS_CODE" = "200" ]; then
+              echo "API is ready!"
+              exit 0
+            fi
+            echo "API not ready yet. Retrying in 2 seconds..."
+            sleep 2
+          done
+          echo "API did not become ready after waiting. Failing."
+          exit 1
+
+      - name: Run pytest against app (from runner)
+        run: |
+          pip install requests pytest
+          pytest -v tests
+
+      - name: Tear down docker compose
+        run: |
+          docker compose down -v
+
+  build-and-push:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    needs: test-compose
+    permissions:
+      packages: write
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Docker image
+        run: |
+          docker buildx build --push \
+            --tag $IMAGE_NAME:${{ env.VERSION }} .
+
+      - name: Dispatch Update Config Repo
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: cerepx/hello-birthday-api
+          event-type: update-config-repo
+          client-payload: '{"version": "${{ env.VERSION }}"}'

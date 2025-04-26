@@ -25,7 +25,7 @@ def get_connection(retries=10, delay=2):
                 host=os.getenv("MYSQL_HOST"),
                 user=os.getenv("MYSQL_USER"),
                 password=os.getenv("MYSQL_PASSWORD"),
-                database=os.getenv("MYSQL_DB"),
+                database=os.getenv("MYSQL_DATABASE"),
                 charset="utf8mb4",
                 cursorclass=pymysql.cursors.DictCursor
             )

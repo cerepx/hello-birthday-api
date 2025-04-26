@@ -41,7 +41,7 @@ cp .env.example .env
 ```
 
 **Environment Variables**:
-   - MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DB
+   - MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE
    - BASE_URL for tests
 
 ### 3. Start the app

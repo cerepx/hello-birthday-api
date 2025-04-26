@@ -1,0 +1,54 @@
+name: Update Config Repo with New Docker Version
+
+on:
+  repository_dispatch:
+    types: [update-config-repo]
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  update-dependency:
+    name: Update dependencies.yml and Create PR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source repo
+        uses: actions/checkout@v4
+
+      - name: Install yq
+        run: |
+          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Clone Config Repo
+        run: |
+          git clone https://github.com/cerepx/hello-birthday-api-config-repo.git
+          cd hello-birthday-api-config-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@github.com"
+
+      - name: Update dependencies.yml
+        run: |
+          cd hello-birthday-api-config-repo
+          yq e -i '.hello-birthday-api.image = "ghcr.io/cerepx/hello-birthday-api:${{ github.event.client_payload.version }}"' dependencies.yml
+
+      - name: Commit and Push Changes
+        run: |
+          cd hello-birthday-api-config-repo
+          git checkout -b update-image-${{ github.event.client_payload.version }}
+          git add dependencies.yml
+          git commit -m "chore: update hello-birthday-api image to ${{ github.event.client_payload.version }}"
+          git push origin update-image-${{ github.event.client_payload.version }}
+
+      - name: Create Pull Request to Config Repo
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: hello-birthday-api-config-repo
+          commit-message: "chore: update hello-birthday-api image to ${{ github.event.client_payload.version }}"
+          title: "Update hello-birthday-api image to ${{ github.event.client_payload.version }}"
+          body: "This PR updates the hello-birthday-api Docker image version to `${{ github.event.client_payload.version }}`."
+          branch: update-image-${{ github.event.client_payload.version }}
+          base: main

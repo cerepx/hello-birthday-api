@@ -2,7 +2,7 @@ services:
   web:
     build: .
     ports:
-      - "5050:5000"
+      - "5050:5050"
     env_file:
       - .env
     depends_on:
@@ -10,9 +10,9 @@ services:
     restart: on-failure
     volumes:
       - .:/app
-    command: gunicorn app.main:app --bind 0.0.0.0:5000 --workers 4
+    command: gunicorn app.main:app --bind 0.0.0.0:5050 --workers 4
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:5050/health"]
       interval: 30s
       timeout: 10s
       retries: 5
