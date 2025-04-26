@@ -19,6 +19,7 @@ def init_db() -> None:
         """)
         conn.commit()
 
+
 def save_user_to_db(username: str, date_of_birth: str) -> None:
     """
     Save or update a user's date of birth in the MySQL database.
@@ -32,6 +33,7 @@ def save_user_to_db(username: str, date_of_birth: str) -> None:
         """, (username, date_of_birth))
         conn.commit()
 
+
 def get_user_from_db(username: str):
     """
     Retrieve a user's date of birth from the MySQL database.
@@ -41,6 +43,7 @@ def get_user_from_db(username: str):
     """
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT date_of_birth FROM users WHERE username = %s", (username,))
+        cursor.execute(
+            "SELECT date_of_birth FROM users WHERE username = %s", (username,))
         row = cursor.fetchone()
         return (row['date_of_birth'],) if row else None

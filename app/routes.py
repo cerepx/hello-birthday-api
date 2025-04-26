@@ -12,6 +12,7 @@ from app.models import init_db, save_user_to_db, get_user_from_db
 # Initialize the SQLite database (creates table if not exists)
 init_db()
 
+
 def register_routes(app):
     """
     Register all API routes (endpoints) directly to the app.
@@ -26,7 +27,6 @@ def register_routes(app):
         """
         if not re.fullmatch(r"[A-Za-z]+", username):
             abort(400, description="Invalid username. Only letters allowed.")
-
 
     def validate_date_of_birth(dob: str) -> date:
         """
@@ -47,7 +47,6 @@ def register_routes(app):
         except ValueError:
             abort(400, description="Invalid date format. Use YYYY-MM-DD.")
 
-
     @app.route('/hello/<username>', methods=['PUT'])
     def save_user(username: str) -> tuple[str, int]:
         """
@@ -66,10 +65,10 @@ def register_routes(app):
             abort(400, description="Missing dateOfBirth in request")
 
         dob = validate_date_of_birth(data["dateOfBirth"])
-        save_user_to_db(username, dob.isoformat())  # Save as ISO string (YYYY-MM-DD)
+        # Save as ISO string (YYYY-MM-DD)
+        save_user_to_db(username, dob.isoformat())
 
         return '', 204
-
 
     @app.route('/hello/<username>', methods=['GET'])
     def get_birthday_message(username: str):
@@ -109,7 +108,6 @@ def register_routes(app):
             message = f"Hello, {username}! Your birthday is in {days_until} day(s)"
 
         return jsonify({"message": message})
-
 
     @app.route("/health")
     def health_check():
