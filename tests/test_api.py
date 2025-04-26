@@ -8,6 +8,7 @@ import requests
 
 BASE_URL = os.getenv("BASE_URL", "http://localhost:5000")
 
+
 def test_health_check():
     """
     Ensure the /health endpoint returns 200 OK.
@@ -15,6 +16,7 @@ def test_health_check():
     response = requests.get(f"{BASE_URL}/health", timeout=5)
     assert response.status_code == 200
     assert response.text == "OK"
+
 
 def test_invalid_username():
     """
@@ -27,6 +29,7 @@ def test_invalid_username():
     )
     assert response.status_code == 400
 
+
 def test_future_date_of_birth():
     """
     Ensure that dateOfBirth in the future is rejected.
@@ -37,6 +40,7 @@ def test_future_date_of_birth():
         timeout=5
     )
     assert response.status_code == 400
+
 
 def test_valid_put_and_get():
     """
