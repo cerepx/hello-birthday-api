@@ -7,6 +7,7 @@ on:
 permissions:
   contents: write
   actions: write
+  pull-requests: write
 
 jobs:
   update-dependency:
@@ -34,14 +35,6 @@ jobs:
           cd hello-birthday-api-config-repo
           yq e -i '.hello-birthday-api.image = "ghcr.io/cerepx/hello-birthday-api:${{ github.event.client_payload.version }}"' dependencies.yml
 
-      - name: Commit and Push Changes
-        run: |
-          cd hello-birthday-api-config-repo
-          git checkout -b update-image-${{ github.event.client_payload.version }}
-          git add dependencies.yml
-          git commit -m "chore: update hello-birthday-api image to ${{ github.event.client_payload.version }}"
-          git push origin update-image-${{ github.event.client_payload.version }}
-
       - name: Create Pull Request to Config Repo
         uses: peter-evans/create-pull-request@v6
         with:
@@ -52,3 +45,6 @@ jobs:
           body: "This PR updates the hello-birthday-api Docker image version to `${{ github.event.client_payload.version }}`."
           branch: update-image-${{ github.event.client_payload.version }}
           base: main
+          labels: |
+            auto-generated,
+            infra-update
