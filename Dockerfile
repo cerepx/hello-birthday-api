@@ -20,4 +20,4 @@ ENV PYTHONUNBUFFERED=1
 EXPOSE 5000
 
 # Default 4 workers is a reasonable default for most small-to-medium apps
-CMD ["gunicorn", "app.main:app", "--bind", "0.0.0.0:5000", "--workers", "${GUNICORN_WORKERS:-4}"]
+CMD sh -c "gunicorn app.main:app -w \${GUNICORN_WORKERS:-4} -b 0.0.0.0:5000"
