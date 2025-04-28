@@ -9,7 +9,7 @@ from flask import abort, jsonify, request
 from app.models import init_db, save_user_to_db, get_user_from_db
 
 
-# Initialize the SQLite database (creates table if not exists)
+# Initialize the Mysql database (creates table if not exists)
 init_db()
 
 
