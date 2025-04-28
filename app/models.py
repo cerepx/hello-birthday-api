@@ -7,6 +7,7 @@ from app.db import get_connection, ensure_database_exists
 # Ensure the database exists before initializing the app
 ensure_database_exists()
 
+
 def init_db() -> None:
     """
     Initialize the MySQL database and create the users table if it doesn't exist.

@@ -3,10 +3,11 @@ Database connection utilities for the Hello Birthday API.
 Handles MySQL connection retries on startup and ensures the database exists.
 """
 
+from typing import Optional
 import os
 import time
 import pymysql
-from typing import Optional
+
 
 # Environment configuration
 MYSQL_HOST = os.getenv("MYSQL_HOST")
@@ -53,7 +54,10 @@ def get_connection(retries: int = 10, delay: int = 2) -> pymysql.connections.Con
             print(f"[DB Retry] Attempt {attempt}/{retries}: {db_error}")
             time.sleep(delay)
 
-    raise ConnectionError(f"Could not connect to MySQL database `{MYSQL_DATABASE}` after {retries} retries.")
+    raise ConnectionError(
+        f"Could not connect to MySQL database `{MYSQL_DATABASE}` "
+        f"after {retries} retries."
+    )
 
 
 def ensure_database_exists(retries: int = 10, delay: int = 2) -> None:
@@ -71,13 +75,19 @@ def ensure_database_exists(retries: int = 10, delay: int = 2) -> None:
         try:
             connection = _connect_to_mysql()
             with connection.cursor() as cursor:
-                cursor.execute(f"CREATE DATABASE IF NOT EXISTS `{MYSQL_DATABASE}`")
+                cursor.execute(
+                    f"CREATE DATABASE IF NOT EXISTS `{MYSQL_DATABASE}`")
             connection.commit()
-            print(f"[DB] Database `{MYSQL_DATABASE}` created or already exists.")
+            print(
+                f"[DB] Database `{MYSQL_DATABASE}` created or already exists.")
             connection.close()
             return
         except pymysql.err.OperationalError as db_error:
-            print(f"[DB Retry] (ensure_database_exists) Attempt {attempt}/{retries}: {db_error}")
+            print(
+                f"[DB Retry] (ensure_database_exists) Attempt {attempt}/{retries}: {db_error}")
             time.sleep(delay)
 
-    raise ConnectionError(f"Could not ensure database `{MYSQL_DATABASE}` exists after {retries} retries.")
+    raise ConnectionError(
+        f"Could not ensure database `{MYSQL_DATABASE}` exists "
+        f"after {retries} retries."
+    )
