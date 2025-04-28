@@ -2,7 +2,10 @@
 Database models and initialization logic for the Hello Birthday API.
 """
 
-from app.db import get_connection
+from app.db import get_connection, ensure_database_exists
+
+# Ensure the database exists before initializing the app
+ensure_database_exists()
 
 
 def init_db() -> None:
