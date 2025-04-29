@@ -1,17 +1,19 @@
-# Hello Birthday API
+# 🎂 Hello Birthday API
 
-A simple API to save and retrieve user birthdays, built with Flask and MySQL.
+[![CI - Test & Lint](https://github.com/cerepx/hello-birthday-api/actions/workflows/ci.yml/badge.svg)](https://github.com/cerepx/hello-birthday-api/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+> A simple birthday reminder API built with Flask, MySQL, and Docker — ready for containerized deployments in cloud-native environments.
 
 ---
 
-## Features
+## ✨ Features
 
-- Save a user's date of birth via `PUT /hello/<username>`
-- Get a birthday greeting via `GET /hello/<username>`
-- Health check endpoint at `/health`
-- Simple SQLite or MySQL backend
-- Dockerized with MySQL and healthchecks
-- Pytest test suite
+- ✅ Save a user's date of birth via `PUT /hello/<username>`
+- ✅ Get a birthday greeting via `GET /hello/<username>`
+- ✅ Health check endpoint at `/health`
+- 🐳 Dockerized with MySQL
+- 🧪 Full Pytest test suite
 
 ---
 
