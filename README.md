@@ -27,6 +27,20 @@
 
 ---
 
+## ⚙️ Prerequisites
+
+To run or develop this project locally, make sure you have:
+
+| Tool | Version | Purpose |
+|------|---------|---------|
+| [Docker](https://www.docker.com/) | ≥ 20.x | Run containerized app |
+| [Docker Compose](https://docs.docker.com/compose/) | ≥ 1.29 | Start containers locally |
+| [Python 3.10+](https://www.python.org/) | Optional | Local test execution |
+| [Make](https://www.gnu.org/software/make/) | Optional | Simplify workflows |
+| [curl](https://curl.se/) | Optional | Manual endpoint testing |
+
+---
+
 ## Run Locally
 
 ### 1. Clone the repo
