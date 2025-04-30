@@ -92,6 +92,12 @@ See real request/response examples and screenshots in the [📸 Live Demo Screen
 
 ---
 
+## 🏗️ Architecture Diagram
+
+![Architecture Diagram](docs/architecture/cicd-hello-birthday-api.svg)
+
+---
+
 ## License
 
 This project is licensed under the MIT License.
