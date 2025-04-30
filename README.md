@@ -72,6 +72,12 @@ cp .env.example .env
 
 ---
 
+## 🧪 Visual Test Logs
+
+See real request/response examples and screenshots in the [📸 Live Demo Screenshots](docs/demo.md).
+
+---
+
 ## License
 
 This project is licensed under the MIT License.
